@@ -14,9 +14,7 @@ auth.set_access_token(access_token, access_token_secret)
 
 api = tweepy.API(auth)
 
-tweets = api.user_timeline(screen_name = 'cognitiva_la', count = 100, include_rts = True)
+tweets = api.user_timeline(screen_name = 'cognitiva_la', count = 10, include_rts = True)
 for tweet in tweets:
-    print(tweet.created_at)
-    print(tweet.text)
-    tweet.favorite()
-    print()
+    if not tweet.favorited:
+        tweet.favorite()

@@ -4,13 +4,16 @@
 import os
 from time import sleep
 import sys
+import re
 import tweepy
 
 
 target = 'cognitiva_la'
 num_tweets = 10
-include_rts = False
-wait = 0.1
+include_rts = True
+min_likes = 10
+wait = 10
+patterns = (r'\.cl\b', r'chile')
 
 
 if not os.path.isfile('auth.data'):
@@ -46,13 +49,22 @@ tweets = api.user_timeline(
         )
 
 for tweet in tweets:
-    print(tweet)
-    print()
-    print(dir(tweet))
-    print()
+    #print(tweet)
+    #print()
+    #print(dir(tweet))
+    #print()
     print('text: ' + tweet.text)
-    print()
+    print('retweeted: ' + str(tweet.retweeted))
+    print('retweet_count: ' + str(tweet.retweet_count))
+    print('favorited: ' + str(tweet.favorited))
+    print('favorite_count: ' + str(tweet.favorite_count))
     if not tweet.favorited:
-        #tweet.favorite()
-        pass
+        for pattern in patterns:
+            if re.search(pattern, tweet.text, re.I|re.U):
+                print('matched pattern!')
+                if tweet.favorite_count >= min_likes:
+                    tweet.favorite()
+                    print('LIKED!!!')
+                    break
+    print()
     sleep(wait)
